@@ -1,0 +1,31 @@
+from app import db
+from datetime import datetime
+
+class Student(db.Model):
+    __tablename__ = 'students'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    roll_number = db.Column(db.String(20), unique=True, nullable=False)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120))
+    phone = db.Column(db.String(20))
+    class_name = db.Column(db.String(50))
+    face_encoding = db.Column(db.LargeBinary)  # Store face encoding
+    profile_image_path = db.Column(db.String(255))
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    attendance_records = db.relationship('AttendanceRecord', backref='student', lazy=True, cascade='all, delete-orphan')
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'roll_number': self.roll_number,
+            'name': self.name,
+            'email': self.email,
+            'phone': self.phone,
+            'class_name': self.class_name,
+            'is_active': self.is_active,
+            'created_at': self.created_at.isoformat()
+        }
